@@ -2,7 +2,6 @@ require "cgi"
 require "base64"
 require "openssl"
 require "digest/sha1"
-#require "faraday"
 require "time"
 require "uri"
 require "net/https"
@@ -58,11 +57,11 @@ module Alexa
     def request
       url = "https://" + Alexa::API_HOST + Alexa::API_URI + "?" + query
       uri = URI(url)
-      puts "Making request to:\n#{url}\n\n"
-      req = Net::HTTP::Get.new(uri)
-      req["Accept"] = "application/xml"
-      req["Content-Type"] = "application/xml"
-      req["x-amz-date"] = timestamp
+
+      req                  = Net::HTTP::Get.new(uri)
+      req["Accept"]        = "application/xml"
+      req["Content-Type"]  = "application/xml"
+      req["x-amz-date"]    = timestamp
       req["Authorization"] = authorization_header
 
       Net::HTTP.start(uri.host, uri.port,
@@ -86,10 +85,6 @@ module Alexa
         "x-amz-date"  => timestamp
       }
     end
-
-
-
-
 
     def uri
       URI.parse("http://#{Alexa::API_HOST}/?" + query + "&Signature=" + CGI::escape(signature))
@@ -149,9 +144,6 @@ module Alexa
     def authorization_header 
       SIGNATURE_ALGORITHM + " " + "Credential=" + access_key_id + "/" + credential_scope + ", " +  "SignedHeaders=" + headers_lst + ", " + "Signature=" + signature;
     end
-
-
-
 
     # escape str to RFC 3986
     def escapeRFC3986(str)
